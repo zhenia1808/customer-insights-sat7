@@ -1,0 +1,19 @@
+[project]
+name = "customer-insights"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["Jinja2"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+risk = ["joblib", "pandas", "scikit-learn", "shap", "xgboost"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

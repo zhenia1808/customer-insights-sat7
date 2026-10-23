@@ -1,0 +1,19 @@
+# Weekly customer summary
+
+Customers in scope: {{ total }}
+Cancellation rate: {{ cancellation_rate }} %
+
+## Themes in comments from customers who cancelled
+{% for theme, count in drivers.items() %}
+- {{ theme }}: {{ count }} comments
+{% endfor %}
+## Customers with higher predicted cancellation risk — review only
+{{ risk_message }}
+
+{% if at_risk %}
+| Name | Email | Phone | Plan | Reason |
+|---|---|---|---|---|
+{% for c in at_risk %}| {{ c.full_name }} | {{ c.email }} | {{ c.phone }} | {{ c.plan }} | {{ c.reason }} |
+{% endfor %}{% else %}
+No higher-risk customer list was generated.
+{% endif %}
