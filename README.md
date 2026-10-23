@@ -40,7 +40,7 @@ The themes are assigned by matching words and phrases in comments. The rules may
 
 The training program and the customer database are separate files. The training program is in the staging folder. It uses the database named by `DB_PATH`; if you don’t set it, it looks for `data/customers.db` in the folder you run it from. The staging sample database has only 8 customers, so it is for demos and tests, not model training.
 
-The model run used the local customer database provided with the project. The training script compared Logistic Regression, Random Forest, and XGBoost, selected Logistic Regression using cross-validation, evaluated it on held-out data, and then retrained it on all records in the local database. The saved model was used to build the report.
+The model run used the local customer database provided with the project. The training script compared Logistic Regression, Random Forest, and XGBoost, selected Logistic Regression using cross-validation, evaluated it on held-out data, and then retrained it on all records in the local database. The saved model is included at `models/cancellation_model.joblib` and is used by default to build the report. The training database is not included.
 
 To repeat the model run, use the local training database provided for the project. It is not included in the staging repository. Replace the example path below with the local path to that database. The 8-customer database created for demos and tests is too small for training.
 
@@ -53,7 +53,7 @@ python scripts/post_summary.py
 
 The report uses the database named by `DB_PATH` for the cancellation rate, comment themes, and active-customer risk list. If `DB_PATH` is not set, the report uses `data/customers.db` from the folder it is run in. The simulated post adds the report to the local channel log; it does not send it anywhere.
 
-The report loads the model with `joblib`, so use only a model you created or trust. It estimates general cancellation risk from past data; it cannot predict who will cancel in a particular week. Its predictions can be wrong, so do not use the list by itself to decide whom to contact. Performance can vary on other data.
+The report loads the bundled model with `joblib` by default and shows estimated risk scores for active customers in the summary; the simulated channel log includes those results too. Set `MODEL_PATH` to use a different model. Only use a model you created or trust. It estimates general cancellation risk from past data; it cannot predict who will cancel in a particular week. Its predictions can be wrong, so do not use the list by itself to decide whom to contact. Performance can vary on other data.
 
 ### Why these models?
 

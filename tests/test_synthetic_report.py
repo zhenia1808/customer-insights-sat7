@@ -1,9 +1,13 @@
 import sqlite3
+import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 from customer_insights.report import build
+from customer_insights import analysis
 from customer_insights.synthetic_data import create_synthetic_database
 
 
@@ -60,7 +64,7 @@ def test_synthetic_database_refuses_to_overwrite_existing_file(tmp_path):
 
 
 def test_report_completes_without_model_and_marks_risk_as_skipped(tmp_path, monkeypatch):
-    monkeypatch.delenv("MODEL_PATH", raising=False)
+    monkeypatch.setattr("customer_insights.analysis.configured_model_path", lambda: None)
     database_path = create_synthetic_database(tmp_path / "data" / "customers.db")
     output_path = tmp_path / "outbox" / "summary.md"
     template_path = Path(__file__).resolve().parents[1] / "templates" / "weekly_summary.md.j2"
@@ -79,6 +83,45 @@ def test_report_completes_without_model_and_marks_risk_as_skipped(tmp_path, monk
     assert "Customers with higher predicted cancellation risk — review only" in summary
     assert "contact this week" not in summary.lower()
     assert "@example.com" not in summary
+
+
+def test_bundled_model_is_selected_by_default(monkeypatch):
+    monkeypatch.delenv("MODEL_PATH", raising=False)
+
+    model_path = Path(__file__).resolve().parents[1] / "models" / "cancellation_model.joblib"
+
+    assert analysis.configured_model_path() == str(model_path)
+
+
+def test_bundled_model_scores_synthetic_demo_customers(tmp_path, monkeypatch):
+    monkeypatch.delenv("MODEL_PATH", raising=False)
+    database_path = create_synthetic_database(tmp_path / "data" / "customers.db")
+    output_path = tmp_path / "outbox" / "summary.md"
+    template_path = Path(__file__).resolve().parents[1] / "templates" / "weekly_summary.md.j2"
+
+    summary = build(
+        db_path=database_path,
+        output_path=output_path,
+        template_path=template_path,
+    )
+
+    assert "Risk predictions skipped" not in summary
+    assert "This is a general estimate based on past data" in summary
+    assert "Estimated general risk" in summary
+    assert "No higher-risk customer list was generated." not in summary
+    assert re.search(r"\|\s*\d+(?:\.\d+)?%\s*\|", summary)
+
+    post_script = Path(__file__).resolve().parents[1] / "scripts" / "post_summary.py"
+    subprocess.run(
+        [sys.executable, str(post_script), str(output_path)],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    channel_log = (tmp_path / "outbox" / "channel_log.md").read_text(encoding="utf-8")
+    assert "Estimated general risk" in channel_log
+    assert re.search(r"\|\s*\d+(?:\.\d+)?%\s*\|", channel_log)
 
 
 def test_report_with_model_uses_general_risk_and_contact_disclaimer(tmp_path, monkeypatch):
