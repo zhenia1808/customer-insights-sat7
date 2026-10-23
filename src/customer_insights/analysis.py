@@ -1,5 +1,6 @@
 """Customer cancellation analysis and optional model-based risk estimates."""
 import os
+from pathlib import Path
 
 def cancellation_rate(customers):
     if not customers:
@@ -163,6 +164,7 @@ def at_risk_customers(customers, analytics_customers, limit=10):
             "email": customer[2],
             "phone": customer[3],
             "plan": customer[6],
+            "risk_score": float(probabilities[i]),
             "reason": ", ".join(reasons) if reasons else "No positive SHAP contributions",
         })
 
@@ -170,8 +172,14 @@ def at_risk_customers(customers, analytics_customers, limit=10):
 
 
 def configured_model_path():
-    """Return an existing model path only when the operator explicitly sets it."""
-    model_path = os.getenv("MODEL_PATH")
-    if not model_path or not os.path.isfile(model_path):
+    """Use MODEL_PATH when set, otherwise use the bundled model."""
+    configured_path = os.getenv("MODEL_PATH")
+    if configured_path:
+        model_path = Path(configured_path)
+    else:
+        project_root = Path(__file__).resolve().parents[2]
+        model_path = project_root / "models" / "cancellation_model.joblib"
+
+    if not model_path.is_file():
         return None
-    return model_path
+    return str(model_path)
