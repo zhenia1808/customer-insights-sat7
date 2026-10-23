@@ -14,5 +14,4 @@ data/*.db
 data/*.sqlite
 data/*.sqlite3
 outbox/
-models/*
-!models/cancellation_model.joblib
+models/
