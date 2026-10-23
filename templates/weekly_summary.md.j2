@@ -3,6 +3,9 @@
 Customers in scope: {{ total }}
 Cancellation rate: {{ cancellation_rate }} %
 
+## Model work
+For the project run, the training script compared Logistic Regression, Random Forest, and XGBoost. Logistic Regression had the best average recall in cross-validation; it was evaluated on held-out data and then retrained on all records in the separate local training database. The 8-customer demo database is too small for training. The model estimates general cancellation risk, not who will cancel in a particular week. Do not use its list by itself to decide whom to contact.
+
 ## Themes in comments from customers who cancelled
 {% for theme, count in drivers.items() %}
 - {{ theme }}: {{ count }} comments
