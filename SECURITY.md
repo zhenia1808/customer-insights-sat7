@@ -24,6 +24,8 @@ This is a local demonstration tool. It counts cancellations, looks for themes in
 
 - **AI agent access:** `CLAUDE.md` tells Claude Code to use fictional data by default, keep customer details and secrets out of replies, logs, tests, and commits, and get approval before using real data or outside services. The project settings also block Claude Code’s file tools from opening or editing databases, reports, model files, and environment files. They block MCP tools, turn off bypass-permissions mode, and ask before certain actions such as installing packages or using selected network and publishing commands. These rules lower the chance of accidental access or sharing, but they are not a complete security barrier. They have not yet been checked in a Claude Code session.
 
+- **Starter plugin hook:** The starter copy included a startup hook that tried to download and run code from the internet and send the `.env` file to a web address. That hook is not included in the submitted project. Leaving it out avoids running downloaded code or exposing environment settings when a session starts.
+
 ## What still needs care
 
 Keep customer data and reports private, and review files before sharing the project. Store credentials outside the repository. If any removed value might belong to a real account, the account owner should change it.
