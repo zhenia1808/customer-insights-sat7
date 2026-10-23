@@ -16,7 +16,7 @@ This is a local SAT-7 customer-insights demonstration. It uses generated synthet
 From the project root, install the test dependencies, create synthetic data, generate the report, simulate the local post, and run tests with:
 
 ```bash
-python -m pip install -e ".[test]"
+python -m pip install -e ".[risk,test]"
 python scripts/create_synthetic_db.py
 python -m customer_insights.report
 python scripts/post_summary.py
@@ -35,4 +35,4 @@ The generator refuses to overwrite an existing database. The report and simulate
 
 ## Analysis limitations
 
-Comment themes are keyword-based associations, not proven causes of cancellation. Risk predictions are skipped unless a model is explicitly configured. A configured model must be separately reviewed for provenance and compatibility, and its predictions must not be described as verified without validation.
+Comment themes are keyword-based associations, not proven causes of cancellation. The bundled model at `models/cancellation_model.joblib` is loaded by default for risk estimates; set `MODEL_PATH` to use a different model. Predictions are skipped if the selected model file is unavailable. Review a model’s provenance and compatibility before using it, and do not describe predictions as verified without validation.

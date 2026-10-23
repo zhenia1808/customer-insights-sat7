@@ -12,7 +12,7 @@ This is a local demonstration tool. It counts cancellations, looks for themes in
 
 - **Customer information in reports:** Reports may contain names, email addresses, and phone numbers. The “post” script saves the report locally; it does not send it to an outside service. Each run adds another entry to the channel log, so older reports stay there too. Review the log before sharing it.
 
-- **Accidentally sharing local files:** Git is set to ignore database files, model files, reports, logs, environment files, and other generated files. This helps keep them out of a shared copy of the project. It does not erase files already committed or remove them from Git history.
+- **Accidentally sharing local files:** Git ignores database files, generated reports and logs, environment files, and model files other than the bundled model at `models/cancellation_model.joblib`. The bundled model is intentionally included in the submitted project. Ignore rules help keep other local files out of shared copies, but do not erase files already committed or remove them from Git history.
 
 - **Accidentally overwriting sample data:** The project uses fictional sample data for normal development and testing. Its database generator refuses to replace a database that already exists, which helps protect data from accidental loss.
 
